@@ -1,0 +1,93 @@
+---
+title: "Reproducible Pitch Presentation"
+author: "Manoj Pradhan"
+date: "July 17, 2017"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Introduction
+
+This presentation is part of the Course Project for the Coursera Developing Data Products class. The peer assessed assignment has two parts. 
+- we need to create a Shiny application and deploy it on Rstudio's servers. 
+- we should use Slidify or Rstudio Presenter to prepare a reproducible pitch presentation about the application. 
+
+####How to Access
+
+The app developed for the first part of the assignment is avalilable at:
+https://pradhanmk1.shinyapps.io/diamondApp/
+
+Source code for ui.R and server.R files are available on the GitHub:
+https://github.com/pradhanmk1/dataproducts
+
+#### About the Data
+
+This app use dataset containing the prices and other attributes of almost 54,000 diamonds
+```{r data, include=TRUE}
+library(ggplot2)
+head(diamonds)
+```
+
+####About the App
+
+Diamond Explorer based on different available parameters
+
+####Input of the App
+
+User will supply sample size of data, x axis values, y axis values, color of diamondto get the graph on the selected parameter.
+
+User can also check on/off on the ?Jitter/Smooth? box to show the  view on the graph.
+user can  provide facet row/facet column values as well to get the graph accordingly.
+
+
+
+## The ui.R 
+
+* It uses the fluidPage layout.
+* Slider input for sample size of diamonds data
+<br />
+  sliderInput('sampleSize', 'Sample Size', min=1, max=nrow(dataset),value=min(1000, nrow(dataset)), step=500, round=0)
+* Select input for X axis,y axis,color,facet_row and facet_column
+<br />
+  selectInput('x', 'X', names(dataset))
+<br />
+  selectInput('y', 'Y', names(dataset), names(dataset)[[2]])<br />
+  selectInput('color', 'Color', c('None', names(dataset)))<br />
+  selectInput('facet_row', 'Facet Row', c(None='.', names(dataset)))<br />
+  selectInput('facet_col', 'Facet Column', c(None='.', names(dataset)))<br />
+* checkbox input for jitter or smooth option of plot
+<br />
+  checkboxInput('jitter', 'Jitter')<br />
+  checkboxInput('smooth', 'Smooth')
+
+
+## The server.R
+
+The app will present the result in a scatter plot.
+
+* uses ggplot for ploting<br />
+  ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+* uses color,facet_grid,geom_jitter or geom_smooth based on the interactive input<br />
+- color <br />
+  aes_string(color=input$color)<br />
+- facet row and facet column<br />
+  facets <- paste(input$ facet_row, '~', input$ facet_col)<br />
+  facet_grid(facets)
+- jitter<br />
+  geom_jitter()<br />
+- smooth<br />
+  geom_smooth()
+
+## Deployment
+
+1.  Created Account in Shinyapps.io
+2.  Run the setAccountInfo
+3.  library(rsconnect)
+4.  library(shiny)
+5.  deployApp("/Shiny_App") or runAPP the shiny R application and publish to Rpub
+
+It generated the Application file https://pradhanmk1.shinyapps.io/diamondApp/
