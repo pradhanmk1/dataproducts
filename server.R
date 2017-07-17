@@ -5,14 +5,18 @@ library(ggplot2)
 
 function(input, output) {
 
+## use diamonds dataset present in ggplot 2 library
   dataset <- reactive({
     diamonds[sample(nrow(diamonds), input$sampleSize),]
   })
 
+## interactive plot using renderPlot
   output$plot <- renderPlot({
 
-    p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+##ggplot using inputted x and y values
 
+    p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+##ggplot using inputted x and y values
     if (input$color != 'None')
       p <- p + aes_string(color=input$color)
 
